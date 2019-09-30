@@ -82,8 +82,8 @@ def unet_block(input_tensor, use_residual, use_lstm, use_spn,
 
                 for depth in range(0, res_depth):
                     if depth < res_depth - 1:
-                        x = layers.conv2d_bn_lrn_drop('conv_res_{}'.format(depth), x, 
-                            [filter_size, filter_size, act_feature_num, act_feature_num], 
+                        x = layers.conv2d_bn_lrn_drop('conv_res_{}'.format(depth), x,
+                            [filter_size, filter_size, act_feature_num, act_feature_num],
                             activation=activation, use_sparse_conv=use_sparse_conv)
                     else:
                         x = layers.conv2d_bn_lrn_drop('conv_res_{}'.format(depth), x, 
@@ -177,7 +177,7 @@ def unet_block(input_tensor, use_residual, use_lstm, use_spn,
                 if prev_upsampling is not None:
                     prev_upsampling_layer = prev_upsampling[layer]
                     x = tf.concat([prev_upsampling_layer, x], axis=3, name='concat')
-                    x = layers.conv2d_bn_lrn_drop('conv1_1', x, 
+                    x = layers.conv2d_bn_lrn_drop('conv1_1', x,
                         [1, 1, 2 * act_feature_num, act_feature_num], activation=activation)
 
                 upsampling_conv[layer] = x
@@ -279,6 +279,7 @@ class CUNet(object):
         # self.num_scales = model_kwargs.get('num_scale', 3)
         self.final_activation = model_kwargs.get('final_activation', 'sigmoid')
 
+        print("final activation", self.final_activation)
         logits = create_net(self.input_tensor, self.channels, self.n_class, 
                             self.scale_space_num, self.res_depth, self.feature_root, 
                             self.filer_size, self.pool_size, self.activation)

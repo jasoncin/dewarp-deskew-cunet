@@ -184,11 +184,10 @@ class DataGenerator(object):
         if num_mask_per_sample < 1:
             raise ValueError('{} should not be less than 1!'.format(num_mask_per_sample))
         else:
-            list_mask = [] 
+            list_mask = []
             file_path, file_extension = os.path.splitext(path)
             dir_file, file_name = os.path.split(file_path)
-            print(dir_file)
-            print(file_name)
+            
             check_dir = os.path.join(os.path.dirname(dir_file), self.label_prefix)
             if not os.path.exists(check_dir):
                 raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), check_dir)

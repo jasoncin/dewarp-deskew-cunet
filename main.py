@@ -20,8 +20,8 @@ def main(path_list_train, path_list_val, output_folder, restore_path):
     # (it is calculated for each image)
     os.environ["TF_CUDNN_USE_AUTOTUNE"] = '0'
 
-    img_channels = 3  # Number of image channels (gray scale)
-    n_class = 2    # Number of output classes
+    img_channels = 1  # Number of image channels (gray scale)
+    n_class = 1   # Number of output classes
 
     ### data generator parameters
     data_kwargs = dict(batch_size_training=1, scale_min=0.2, scale_max=0.3, 
@@ -32,11 +32,11 @@ def main(path_list_train, path_list_val, output_folder, restore_path):
                                 label_prefix='labels', data_kwargs=data_kwargs)
 
     ### model hyper-parameters
-    model_kwargs = dict(final_activation='softmax', feature_root=16, scale_space_num=3, res_depth=2)
+    model_kwargs = dict(final_activation='identity', feature_root=16, scale_space_num=3, res_depth=2)
 
     model = CUNet(img_channels, n_class, model_kwargs=model_kwargs)
-    opt_kwargs = dict(optimizer='rmsprop', learning_rate=0.001)
-    loss_kwargs = dict(loss_name='cross_entropy', act_name='softmax')
+    opt_kwargs = dict(optimizer='momentum', learning_rate=0.001)
+    loss_kwargs = dict(loss_name='mse', act_name='softmax')
 
     # start training
     trainer = Trainer(model, opt_kwargs=opt_kwargs, loss_kwargs=loss_kwargs)

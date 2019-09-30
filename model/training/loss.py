@@ -42,6 +42,8 @@ def get_loss(logits, tgt, kwargs={}):
     loss_name = kwargs.get("loss_name", "cross_entropy")
     act_name = kwargs.get("act_name", "softmax")
 
+    act = None
+
     if act_name is "softmax":
         act = tf.nn.softmax
     if act_name is "sigmoid":
@@ -53,7 +55,7 @@ def get_loss(logits, tgt, kwargs={}):
         prediction = act(logits)
 
     print("Loss Type: " + loss_name)
-
+    final_loss = None
     if loss_name is "cross_entropy":
         class_weights = kwargs.get("class_weights", None)
         if class_weights is not None:
