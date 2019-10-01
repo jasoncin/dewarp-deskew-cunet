@@ -43,6 +43,7 @@ def get_loss(logits, tgt, kwargs={}):
     act_name = kwargs.get("act_name", "softmax")
 
     act = None
+    prediction = None
 
     if act_name is "softmax":
         act = tf.nn.softmax
@@ -114,31 +115,40 @@ def get_loss(logits, tgt, kwargs={}):
         loss = tf.reduce_mean(dices)
 
     elif loss_name is "mse":
-        ignore_last_channel = kwargs.get("ignore_last_channel", True)
-        uPred = tf.unstack(prediction, axis=3)
-        uTgt = tf.unstack(tgt, axis=3)
-        if ignore_last_channel:
-            uPred = uPred[:-1]
-            uTgt = uTgt[:-1]
-        mses = []
-        for aCH in range(0, len(uPred)):
-            aRMSE = tf.losses.mean_squared_error(uTgt[aCH], uPred[aCH])
-            mses.append(aRMSE)
-        loss = 0.0
+        # ignore_last_channel = kwargs.get("ignore_last_channel", True)
+        # uPred = tf.unstack(prediction, axis=3)
+        # uTgt = tf.unstack(tgt, axis=3)
+        # if ignore_last_channel:
+        #     uPred = uPred[:-1]
+        #     uTgt = uTgt[:-1]
+        # mses = []
+        # for aCH in range(0, len(uPred)):
+        #     aRMSE = tf.losses.mean_squared_error(uTgt[aCH], uPred[aCH])
+        #     mses.append(aRMSE)
+        # loss = 0.0
+        #
+        # class_weights = kwargs.get("class_weights", None)
+        # if class_weights is not None:
+        #     print("Class Weights: " + str(class_weights))
+        #     norm = 0
+        #     for aCH in range(0,len(mses)):
+        #         loss += class_weights[aCH]*mses[aCH]
+        #         norm += class_weights[aCH]
+        # else:
+        #     for aCH in range(0,len(mses)):
+        #         loss += mses[aCH]
 
-        class_weights = kwargs.get("class_weights", None)
-        if class_weights is not None:
-            print("Class Weights: " + str(class_weights))
-            norm = 0
-            for aCH in range(0,len(mses)):
-                loss += class_weights[aCH]*mses[aCH]
-                norm += class_weights[aCH]
-        else:
-            for aCH in range(0,len(mses)):
-                loss += mses[aCH]
+        flat_logits = tf.reshape(logits, [-1, n_class])
+        flat_labels = tf.reshape(tgt, [-1, n_class])
+
+        loss = tf.losses.mean_squared_error(flat_labels[0], flat_logits[0])
+
+        # loss = tf.reduce_mean(loss_map)
 
     elif loss_name is "mse_mean":
         ignore_last_channel = kwargs.get("ignore_last_channel", True)
+        print("Prediction shape", prediction, prediction.shape)
+        print("Tgt shape", tgt.shape)
         uPred = tf.unstack(prediction, axis=3)
         uTgt = tf.unstack(tgt, axis=3)
         if ignore_last_channel:
@@ -232,15 +242,25 @@ def get_weighted_mean(mses, sums, globSum):
 def get_mean_iou(pred_class, tgt_class, num_class, ignore_class_id=-1):
     pred = tf.reshape(pred_class, [-1, ])
     gt = tf.reshape(tgt_class, [-1, ])
+    #
+    # if ignore_class_id >= 0:
+    #     weights = tf.cast(tf.not_equal(gt, ignore_class_id), tf.int32)
+    # else:
+    #     weights = tf.ones_like(gt)
 
-    if ignore_class_id >= 0:
-        weights = tf.cast(tf.not_equal(gt, ignore_class_id), tf.int32)
-    else:
-        weights = tf.ones_like(gt)
+    flat_logits = tf.reshape(pred_class, [-1, num_class])
+    flat_labels = tf.reshape(tgt_class, [-1, num_class])
 
+    # mIoU, update_op = tf.metrics.accuracy(labels=gt,
+    #                                   predictions=pred)
+
+    mIoU, update_op = tf.metrics.accuracy(labels=flat_labels[0],
+                                          predictions=flat_logits[0])
+
+    print(mIoU, update_op)
     # mIoU
     # mIoU, update_op = tf.metrics.mean_iou(pred, gt, num_classes=num_class, weights=weights, name='m_metrics')
     # mIoU = tf.reduce_mean(tf.cast(pred == gt, dtype='float32'))
-    mIoU, update_op = tf.metrics.accuracy(pred, gt, weights=weights, name='m_metrics')
+    # mIoU, update_op = tf.metrics.accuracy(pred, gt, weights=weights, name='m_metrics')
 
     return mIoU, update_op

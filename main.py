@@ -35,8 +35,8 @@ def main(path_list_train, path_list_val, output_folder, restore_path):
     model_kwargs = dict(final_activation='identity', feature_root=16, scale_space_num=3, res_depth=2)
 
     model = CUNet(img_channels, n_class, model_kwargs=model_kwargs)
-    opt_kwargs = dict(optimizer='momentum', learning_rate=0.001)
-    loss_kwargs = dict(loss_name='mse', act_name='softmax')
+    opt_kwargs = dict(optimizer='adam', learning_rate=0.001)
+    loss_kwargs = dict(loss_name='mse', act_name='identity')
 
     # start training
     trainer = Trainer(model, opt_kwargs=opt_kwargs, loss_kwargs=loss_kwargs)

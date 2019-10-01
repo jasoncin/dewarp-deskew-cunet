@@ -22,7 +22,8 @@ class Trainer(object):
     def __init__(self, net, opt_kwargs={}, loss_kwargs={}):
         self.net = net
         self.label = tf.placeholder("float", shape=[None, None, None, self.net.n_class])
-        self.label_class = tf.argmax(self.label, axis=-1)
+        # self.label_class = tf.argmax(self.label, axis=-1)
+        self.label_class = self.label
 
         self.global_step = tf.placeholder(tf.int64)
         self.opt_kwargs = opt_kwargs

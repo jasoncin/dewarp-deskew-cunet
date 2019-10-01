@@ -298,7 +298,8 @@ class CUNet(object):
         elif self.final_activation is "identity":
             self.predictor = tf.identity(self.logits, name='output')
 
-        self.predictor_class = tf.argmax(self.predictor, -1)
+        # self.predictor_class = tf.argmax(self.predictor, -1)
+        self.predictor_class = self.predictor
 
     
     def count_trainable_parameters(self):
