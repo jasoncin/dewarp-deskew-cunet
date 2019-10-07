@@ -29,7 +29,7 @@ __status__ = "Module"
 
 def unet_block(input_tensor, use_residual, use_lstm, use_spn, 
                use_attention, in_channel, scale_space_num, res_depth, 
-               feature_root, filter_size, pool_size, activation, 
+               feature_root, filter_size, pool_size, activation, last_block,
                prev_downsampling=None, prev_upsampling=None, binary_mask=None):
     """
         Define an U-Net block which consists of an encoder (down-sampling layers)
@@ -63,7 +63,8 @@ def unet_block(input_tensor, use_residual, use_lstm, use_spn,
     else:
         use_sparse_conv = False
 
-    # Downsampling block 
+    # Downsampling block
+    print("Downsampling block")
     for layer in range(0, scale_space_num):
         with tf.variable_scope('unet_downsampling_{}'.format(layer)) as scope:
             if use_residual:
@@ -105,8 +106,8 @@ def unet_block(input_tensor, use_residual, use_lstm, use_spn,
                 if use_attention and layer > scale_space_num - 2:
                     downsampling_conv[layer] = attach_attention_module(x, 'sa_block')
                 else:
-                    downsampling_conv[layer] = x 
-
+                    downsampling_conv[layer] = x
+                downsampling_conv[layer] = x
             else:
                 conv1 = layers.conv2d_bn_lrn_drop('conv_1', input_tensor, 
                         [filter_size, filter_size, last_feature_num, act_feature_num], activation=activation)
@@ -130,18 +131,22 @@ def unet_block(input_tensor, use_residual, use_lstm, use_spn,
     if use_sparse_conv:
         input_tensor = input_tensor[0]
     
-    # Bottleneck bolck 
+    # Bottleneck block
+    print("Bottleneck block")
+
     if use_lstm:
         input_tensor = layers.separable_rnn('rnn', input_tensor, last_feature_num, cell_type='LSTM')
 
     if use_spn:
+        # attach_attention_module(x, 'sa_block')
+        # print("SPN in bottle block")
         num_guidance = 2
         with tf.variable_scope('CSPN') as scope:
-            guidance_out = layers.down_sample_resnet(downsampling_conv[scale_space_num - 2], 
+            guidance_out = layers.down_sample_resnet(attach_attention_module(downsampling_conv[scale_space_num - 2], 'sa_block'),
                             act_feature_num, act_feature_num * num_guidance,
                             filter_size, res_depth, ksize_pooling, activation)
             input_tensor = cspn(input_tensor, None, guidance_out, kernel_size=3, num_layers=8)
-
+    print("Upsampling block")
     # Upsampling block 
     for layer in range(scale_space_num - 2, -1, -1):
         with tf.variable_scope('unet_upsampling_{}'.format(layer)) as scope:
@@ -191,7 +196,19 @@ def unet_block(input_tensor, use_residual, use_lstm, use_spn,
         
             last_feature_num = act_feature_num
             act_feature_num /= pool_size
-    
+
+    # if not last_block:
+    #     print("Adding attention + spatial transformer network")
+    #     attach_attention_module(input_tensor, 'sa_block')
+    #     act_feature_num = int(last_feature_num * pool_size)
+    #     print("act_feature_num", act_feature_num)
+    #     num_guidance = 2
+    #     with tf.variable_scope('CSPN') as scope:
+    #         guidance_out = layers.down_sample_resnet(upsampling_conv[scale_space_num - 3],
+    #                         act_feature_num, int(act_feature_num / num_guidance),
+    #                         filter_size, res_depth, ksize_pooling, activation)
+    #         input_tensor = cspn(input_tensor, None, guidance_out, kernel_size=3, num_layers=8)
+
     return input_tensor, downsampling_conv, upsampling_conv 
 
 def create_net(input_tensor, in_channel, n_class, scale_space_num, 
@@ -212,15 +229,16 @@ def create_net(input_tensor, in_channel, n_class, scale_space_num,
 
     use_residual = True 
     use_lstm = False
-    use_spn = False 
+    use_spn = True
 
-    num_blocks = 2
-    use_attention = False 
+    num_blocks = 3
+    use_attention = True
     binary_mask = None 
 
     input_scale_map = OrderedDict()
     input_scale_map[0] = input_tensor
 
+    last_block = False
     with tf.variable_scope('feature_map') as scope:
         for block_id in range(0, num_blocks):
             with tf.variable_scope('feature_map_{}'.format(block_id)) as scope:
@@ -231,15 +249,17 @@ def create_net(input_tensor, in_channel, n_class, scale_space_num,
                 else:
                     num_channels = n_class
 
-                if use_spn and block_id == num_blocks - 1:
+                if use_spn and block_id >= num_blocks - 2:
                     enable_spn = True 
                 else:
                     enable_spn = False
 
+                if block_id == num_blocks - 1:
+                    last_block = True
                 output_tensor, prev_downsampling, prev_upsampling = unet_block(input_tensor, use_residual, 
                                                             use_lstm, enable_spn, use_attention, num_channels, 
                                                             scale_space_num, res_depth, feature_root, filter_size, 
-                                                            pool_size, activation, prev_downsampling=prev_downsampling, 
+                                                            pool_size, activation, last_block, prev_downsampling=prev_downsampling,
                                                             prev_upsampling=prev_upsampling, binary_mask=binary_mask) 
 
                 output_tensor = layers.conv2d_bn_lrn_drop('n_class', output_tensor, [4, 4, feature_root, n_class], activation=tf.identity)
@@ -298,7 +318,10 @@ class CUNet(object):
         elif self.final_activation is "identity":
             self.predictor = tf.identity(self.logits, name='output')
 
+        self.predictor = tf.nn.relu(self.logits, name='output')
+
         # self.predictor_class = tf.argmax(self.predictor, -1)
+
         self.predictor_class = self.predictor
 
     
@@ -331,7 +354,7 @@ class CUNet(object):
             :param sess: current session
             :param model_path: path to file system location
         """
-        saver = tf.train.Saver(max_to_keep=50)
+        saver = tf.train.Saver(max_to_keep=3)
         save_path = saver.save(sess, model_path)
         return save_path
 

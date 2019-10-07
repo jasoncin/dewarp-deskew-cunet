@@ -57,7 +57,7 @@ def conv2d_bn_lrn_drop(name_scope,
         Returns:
             `4-D Tensor`, has the same type `inputs`.
     """
-
+    print("Kernel size", kernel_size)
     with tf.variable_scope(name_scope):
         if init_opt == 0:
             stddev = np.sqrt(2.0 / (kernel_size[0] * kernel_size[1] * kernel_size[2] * kernel_size[3]))
@@ -540,6 +540,7 @@ def down_sample_resnet(x, channel_in, channel_out, filter_size, res_depth, pool_
     #                                            channel_in], activation=tf.identity)
     orig_x = x
     # x = tf.nn.relu(x, name='activation')
+    print("Down sample resnet")
     for aRes in range(0, res_depth):
         if aRes < res_depth - 1:
             x = conv2d_bn_lrn_drop('convR_{}'.format(aRes), x, [filter_size, filter_size, channel_in,

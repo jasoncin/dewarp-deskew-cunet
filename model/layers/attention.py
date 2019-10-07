@@ -263,9 +263,9 @@ def self_attention_wrapper(input_feature, name):
         # attention_feature = add_positional_embedding_nd(input_feature, max_length=1e3, name=name + 'positional')
         attention_feature = add_timing_signal_nd(input_feature)
         # print('positional embemdding')
-        attention_feature = spatialCGNLx(attention_feature,
-                                         groups=8)
-        # attention_feature = self_attention_block(attention_feature, 'sp_at', num_heads=8) #
+        # attention_feature = spatialCGNLx(attention_feature,
+        #                                  groups=8)
+        attention_feature = self_attention_block(attention_feature, 'sp_at', num_heads=8) #
     return attention_feature
 
 

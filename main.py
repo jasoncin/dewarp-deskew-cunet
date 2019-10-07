@@ -32,7 +32,7 @@ def main(path_list_train, path_list_val, output_folder, restore_path):
                                 label_prefix='labels', data_kwargs=data_kwargs)
 
     ### model hyper-parameters
-    model_kwargs = dict(final_activation='identity', feature_root=16, scale_space_num=3, res_depth=2)
+    model_kwargs = dict(final_activation='identity', feature_root=16, scale_space_num=4, res_depth=3)
 
     model = CUNet(img_channels, n_class, model_kwargs=model_kwargs)
     opt_kwargs = dict(optimizer='adam', learning_rate=0.001)
@@ -40,7 +40,7 @@ def main(path_list_train, path_list_val, output_folder, restore_path):
 
     # start training
     trainer = Trainer(model, opt_kwargs=opt_kwargs, loss_kwargs=loss_kwargs)
-    trainer.train(data_provider, output_folder, restore_path, batch_steps_per_epoch=256, epochs=200, gpu_device=0)
+    trainer.train(data_provider, output_folder, restore_path, batch_steps_per_epoch=256, epochs=100, gpu_device=0)
 
 
 if __name__ == "__main__":

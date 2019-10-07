@@ -85,6 +85,8 @@ class DataGenerator(object):
 
         # Ensure one-hot encoding consistency after geometric distortions
         self.one_hot_encoding = data_kwargs.get('one_hot_encoding', True)
+        self.one_hot_encoding = False
+
         self.dominating_channel = data_kwargs.get('dominating_channel', 0)
         self.dominating_channel = min(self.dominating_channel, n_classes-1)
 
@@ -181,6 +183,7 @@ class DataGenerator(object):
             :param prefix: name of folder containing mask images 
             :return: a list of mask images 
         """
+        # print("Train path", path)
         if num_mask_per_sample < 1:
             raise ValueError('{} should not be less than 1!'.format(num_mask_per_sample))
         else:
@@ -195,6 +198,7 @@ class DataGenerator(object):
             if num_mask_per_sample == 1:
                 mask_idx_path = os.path.join(os.path.dirname(dir_file), \
                     self.label_prefix, '{}{}'.format(file_name, file_extension))
+                # print("Mask name:", mask_idx_path)
                 list_mask.append(misc.imread(mask_idx_path))
             else:
                 for idx in range(0, num_mask_per_sample):
@@ -269,26 +273,26 @@ class DataGenerator(object):
                     res = np.dstack([np.expand_dims(misc.imresize(pair_maps[i], scale, interp='bicubic'), 2) \
                                 for i in range(0, img_channels + mask_channels)])
 
-                    if affine:
-                        res = affine_transform(res, self.affine_value)
-                    if elastic:
-                        res = elastic_transform(res, self.elastic_value_x, self.elastic_value_y)
-                    if rotate or rotate_90:
-                        angle = uniform(-20, 20)
-                        if rotate_90:
-                            if angle < 0:
-                                angle = -45.0
-                            elif angle < 45:
-                                angle = -45.0
-                            elif angle < 90.0:
-                                angle = 45.0
-                            else:
-                                angle = 90.0
-                        res = ndimage.interpolation.rotate(res, angle)
+                    # if affine:
+                    #     res = affine_transform(res, self.affine_value)
+                    # if elastic:
+                    #     res = elastic_transform(res, self.elastic_value_x, self.elastic_value_y)
+                    # if rotate or rotate_90:
+                    #     angle = uniform(-20, 20)
+                    #     if rotate_90:
+                    #         if angle < 0:
+                    #             angle = -45.0
+                    #         elif angle < 45:
+                    #             angle = -45.0
+                    #         elif angle < 90.0:
+                    #             angle = 45.0
+                    #         else:
+                    #             angle = 90.0
+                    #     res = ndimage.interpolation.rotate(res, angle)
 
                     input_img = res[:, :, 0: img_channels]
                     input_mask = res[:, :, img_channels: ]
-                    input_mask = np.where(input_mask > 64, 1.0, 0.0)
+                    # input_mask = np.where(input_mask > 64, 1.0, 0.0)
 
                     if self.one_hot_encoding:
                         aMap = input_mask[:, :, self.dominating_channel]
@@ -300,17 +304,13 @@ class DataGenerator(object):
                                 aMap = np.logical_or(aMap, tMap)
                                 input_mask[:, :, aM] = tMap
 
-                        # Add+Calculate the clutter map
-                        # print(input_mask.shape)
-                        # input_mask = np.pad(input_mask, ((0,0),(0,0),(0,1)), mode='constant')
-                        # print(aMap.shape)
-                        # input_mask[:, :, mask_channels - 1] = np.logical_not(aMap)
-                        # print('*** ', input_mask.shape)
-                        # plt.imshow(input_mask[:, :, mask_channels - 1])
-                        # plt.show()
-                    
-                    # input_img = (255.0 - input_img) / 255.0 
+                    # input_img = (255.0 - input_img) / 255.0
+                    # input_img = (1.0 - input_img / 255.0)
                     input_img = input_img / 255.0
+
+                    # input_mask = (255.0 - input_mask) / 255.0
+                    input_mask = input_mask / 255.0
+
                     imgs.append(input_img)
                     masks.append(input_mask)
 

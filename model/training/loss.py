@@ -84,7 +84,6 @@ def get_loss(logits, tgt, kwargs={}):
             elif act_name is "sigmoid":
                 loss_map = tf.nn.sigmoid_cross_entropy_with_logits(logits=flat_logits, labels=flat_labels)
 
-            
             loss = tf.reduce_mean(loss_map)
             final_loss = None
 
@@ -250,6 +249,12 @@ def get_mean_iou(pred_class, tgt_class, num_class, ignore_class_id=-1):
 
     flat_logits = tf.reshape(pred_class, [-1, num_class])
     flat_labels = tf.reshape(tgt_class, [-1, num_class])
+
+    flat_logits = tf.multiply(flat_logits, 255.0)
+    flat_labels = tf.multiply(flat_labels, 255.0)
+
+    flat_logits = tf.dtypes.cast(flat_logits, dtype=tf.int32)
+    flat_labels = tf.dtypes.cast(flat_labels, dtype=tf.int32)
 
     # mIoU, update_op = tf.metrics.accuracy(labels=gt,
     #                                   predictions=pred)

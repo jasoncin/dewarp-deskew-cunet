@@ -96,7 +96,7 @@ class Trainer(object):
 
             print("Start optimization")
 
-            bestAcc = 0.0
+            bestAcc = 1111110.0
             shown_samples = 0
             for epoch in range(epochs):
                 total_loss = 0
@@ -147,7 +147,7 @@ class Trainer(object):
                 total_acc = total_acc / batch_steps_per_epoch
 
                 time_used = time.time() - time_step_train
-
+                train_total_loss = total_loss
                 self.output_epoch_stats_train(epoch + 1, total_loss, total_loss_final, total_acc, shown_samples, lr, time_used)
 
                 ### VALIDATION
@@ -199,9 +199,9 @@ class Trainer(object):
                     data_provider.restart_val_runner()
 
                 if not output_path is None:
-                    if total_m_iou > bestAcc: #or (epoch + 1) % 8 == 0:
+                    if total_loss <= bestAcc: #or (epoch + 1) % 8 == 0:
                         # if total_acc > bestAcc:
-                        bestAcc = total_m_iou
+                        bestAcc = total_loss
                         save_pathAct = save_path + str(epoch + 1)
                         print("Saving checkpoint")
                         self.net.save(sess, save_pathAct)
