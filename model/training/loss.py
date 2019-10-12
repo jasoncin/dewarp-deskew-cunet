@@ -30,6 +30,27 @@ def focal_loss(labels, logits, gamma=2.0, alpha=4.0):
     reduced_fl = tf.reduce_max(fl, axis=1)
     return reduced_fl
 
+def get_all_losses(all_logits, tgt, kwargs={}):
+    """ Get all lost of all output logits of U-Nets
+    Arguments:
+        all_logits: list of tensors
+        tgt: ground truth tensor
+        kwargs: loss Arguments
+    Returns:
+        loss: total loss value
+    """
+    final_loss = None
+    n_class = tf.shape(tgt)[-1]
+    loss_name = kwargs.get("loss_name", "cross_entropy")
+    act_name = kwargs.get("act_name", "softmax")
+
+    flat_logits = list(map(lambda x: tf.reshape(x, [-1, n_class]), all_logits))
+    flat_tgt = tf.reshape(tgt, [-1, n_class])
+    losses = list(map(lambda x: tf.losses.mean_squared_error(x, tgt), all_logits))
+    loss = tf.reduce_mean(losses)
+
+    return (loss, final_loss)
+
 def get_loss(logits, tgt, kwargs={}):
     """
     Constructs the loss function, either cross_entropy, weighted cross_entropy or dice_coefficient.

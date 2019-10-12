@@ -1,0 +1,170 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CUNet	model/model.py	/^class CUNet(object):$/;"	c
+CUNet	model/tmp.py	/^class CUNet(object):$/;"	c
+DataGenerator	data_loader/data_generator.py	/^class DataGenerator(object):$/;"	c
+Data_provider_la	data_loader/tmp.py	/^class Data_provider_la(object):$/;"	c
+EvalSegErr	utils/eval_segm.py	/^class EvalSegErr(Exception):$/;"	c
+IMG_TARGET_COLS	elastic_deformation.py	/^IMG_TARGET_COLS = 96$/;"	v
+IMG_TARGET_ROWS	elastic_deformation.py	/^IMG_TARGET_ROWS = 80$/;"	v
+ImageDataGenerator	elastic_deformation.py	/^class ImageDataGenerator(Iterator):$/;"	c
+Trainer	model/training/trainer.py	/^class Trainer(object):$/;"	c
+__author__	model/model.py	/^__author__ = "Kristopher"$/;"	v
+__author__	model/tmp.py	/^__author__ = "Kristopher"$/;"	v
+__email__	model/model.py	/^__email__ = "kristopher@cinnamon.is"$/;"	v
+__email__	model/tmp.py	/^__email__ = "kristopher@cinnamon.is"$/;"	v
+__init__	data_loader/data_generator.py	/^    def __init__(self, path_list_train, path_list_eval, n_classes, $/;"	m	class:DataGenerator
+__init__	data_loader/tmp.py	/^    def __init__(self, path_list_train, path_list_val, n_classes, threadNum=24, queueCapacity=64, kwargs_dat={}):$/;"	m	class:Data_provider_la
+__init__	elastic_deformation.py	/^    def __init__(self, X, y, batch_size=32, shuffle=True, seed=None):$/;"	m	class:ImageDataGenerator
+__init__	model/model.py	/^    def __init__(self, channels=1, n_class=1, model_kwargs={}):$/;"	m	class:CUNet
+__init__	model/tmp.py	/^    def __init__(self, channels=1, n_class=1, model_kwargs={}):$/;"	m	class:CUNet
+__init__	model/training/trainer.py	/^    def __init__(self, net, opt_kwargs={}, loss_kwargs={}):$/;"	m	class:Trainer
+__init__	utils/eval_segm.py	/^    def __init__(self, value):$/;"	m	class:EvalSegErr
+__status__	model/model.py	/^__status__ = "Module"$/;"	v
+__status__	model/tmp.py	/^__status__ = "Module"$/;"	v
+__str__	utils/eval_segm.py	/^    def __str__(self):$/;"	m	class:EvalSegErr	file:
+_fillQueue	data_loader/data_generator.py	/^    def _fillQueue(self, q, input_list, stop_event, batch_size, $/;"	m	class:DataGenerator
+_fillQueue	data_loader/tmp.py	/^    def _fillQueue(self, q, aList, stopEvent, batch_size, min_scale, max_scale, affine, elastic, rotate, rotateMod90):$/;"	m	class:Data_provider_la
+_get_list_queue	data_loader/data_generator.py	/^    def _get_list_queue(self, input_list, thread_num, queue_capacity, $/;"	m	class:DataGenerator
+_get_list_queue	data_loader/tmp.py	/^    def _get_list_queue(self, aList, threadNum, queueCapacity, stopEvent, batch_size, min_scale, max_scale, affine, elastic, rotate, rotateMod90):$/;"	m	class:Data_provider_la
+_get_mask_image	data_loader/data_generator.py	/^    def _get_mask_image(self, path, num_mask_per_sample=1):$/;"	m	class:DataGenerator
+_initialize	model/training/trainer.py	/^    def _initialize(self, batch_steps_per_epoch, output_path):$/;"	m	class:Trainer
+_preprocess	elastic_deformation.py	/^    def _preprocess(self, imgs):$/;"	m	class:ImageDataGenerator
+add_positional_embedding_nd	model/layers/attention.py	/^def add_positional_embedding_nd(x, max_length, name):$/;"	f
+add_timing_signal_nd	model/layers/attention.py	/^def add_timing_signal_nd(x, min_timescale=1.0, max_timescale=1.0e3):$/;"	f
+affine_grid_generator	model/layers/stn.py	/^def affine_grid_generator(height, width, theta):$/;"	f
+affine_transform	utils/image_util.py	/^def affine_transform(image, affine_value):$/;"	f
+affine_transform	utils/util.py	/^def affine_transform(image, affine_value):$/;"	f
+apply_transform	elastic_deformation.py	/^    def apply_transform(self, image, mask):$/;"	m	class:ImageDataGenerator
+args	freeze_graph.py	/^    args = parser.parse_args()$/;"	v
+attach_attention_module	model/layers/attention.py	/^def attach_attention_module(net, attention_module, block_scope=None):$/;"	f
+b_fc1	model/layers/stn.py	/^  b_fc1 = tf.Variable(initial_value=initial, name='b_fc1') $/;"	v
+b_mask	model/layers/sparse.py	/^    b_mask = tf.placeholder(tf.float32,$/;"	v
+bilinear_sampler	model/layers/stn.py	/^def bilinear_sampler(img, x, y):$/;"	f
+calcAffineMatrix	utils/image_util.py	/^def calcAffineMatrix(sourcePoints, targetPoints):$/;"	f
+calcAffineMatrix	utils/util.py	/^def calcAffineMatrix(sourcePoints, targetPoints):$/;"	f
+cbam_block	model/layers/attention.py	/^def cbam_block(input_feature, name, ratio=8):$/;"	f
+channel_attention	model/layers/attention.py	/^def channel_attention(input_feature, name, ratio=8):$/;"	f
+check_size	utils/eval_segm.py	/^def check_size(eval_segm, gt_segm):$/;"	f
+conv	model/layers/attention.py	/^def conv(x, channels, kernel=4, stride=2, pad=0, pad_type='zero', use_bias=True, sn=False, scope='conv_0'):$/;"	f
+conv2d_bn_lrn_drop	model/layers/layers.py	/^def conv2d_bn_lrn_drop(name_scope,$/;"	f
+count_trainable_parameters	model/model.py	/^    def count_trainable_parameters(self):$/;"	m	class:CUNet
+count_trainable_parameters	model/tmp.py	/^    def count_trainable_parameters(self):$/;"	m	class:CUNet
+create_net	model/tmp.py	/^def create_net(input_tensor, in_channel, n_class, scale_space_num, $/;"	f
+cspn	model/layers/cspn.py	/^def cspn(x, sparse_depth, guidance, kernel_size, num_layers):$/;"	f
+decision	utils/generic_util.py	/^def decision(probability):$/;"	f
+dilated_conv2d_bn_lrn_drop	model/layers/layers.py	/^def dilated_conv2d_bn_lrn_drop(name_scope,$/;"	f
+dir	filter_files.py	/^dir = 'data_text_combine\/labels'$/;"	v
+dir	freeze_graph.py	/^dir = os.path.dirname(os.path.realpath(__file__))$/;"	v
+dir	split_train_test.py	/^dir = '.\/data\/data_text_combine'$/;"	v
+dir_path	utils/path_util.py	/^    dir_path = 'train_data\/images'$/;"	v
+down_sample_resnet	model/layers/layers.py	/^def down_sample_resnet(x, channel_in, channel_out, filter_size, res_depth, pool_size, activation):$/;"	f
+downsample_avg	model/layers/layers.py	/^def downsample_avg(input_tensor, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1]):$/;"	f
+eight_way_propagation	model/layers/cspn.py	/^def eight_way_propagation(weight_matrix, blur_input, kernel, num_channels):$/;"	f
+elastic_transform	elastic_deformation.py	/^def elastic_transform(image, alpha, sigma, random_state=None):$/;"	f
+elastic_transform	utils/image_util.py	/^def elastic_transform(image, elastic_value_x, elastic_value_y):$/;"	f
+elastic_transform	utils/util.py	/^def elastic_transform(image,elastic_value_x ,elastic_value_y):$/;"	f
+extract_both_masks	utils/eval_segm.py	/^def extract_both_masks(eval_segm, gt_segm, cl, n_cl):$/;"	f
+extract_classes	utils/eval_segm.py	/^def extract_classes(segm):$/;"	f
+extract_masks	utils/eval_segm.py	/^def extract_masks(segm, cl, n_cl):$/;"	f
+feat_norm	model/layers/layers.py	/^def feat_norm(input, dimZ):$/;"	f
+focal_loss	model/training/loss.py	/^def focal_loss(labels, logits, gamma=2.0, alpha=4.0):$/;"	f
+freeze_graph	freeze_graph.py	/^def freeze_graph(model_dir, output_node_names):$/;"	f
+frequency_weighted_IU	utils/eval_segm.py	/^def frequency_weighted_IU(eval_segm, gt_segm):$/;"	f
+get_F_value	utils/util.py	/^def get_F_value(path_to_eval_file):$/;"	f
+get_loss	model/training/loss.py	/^def get_loss(logits, tgt, kwargs={}):$/;"	f
+get_mean_iou	model/training/loss.py	/^def get_mean_iou(pred_class, tgt_class, num_class, ignore_class_id=-1):$/;"	f
+get_optimizer	model/training/optimizer.py	/^def get_optimizer(cost, global_step, batch_steps_per_epoch, kwargs={}):$/;"	f
+get_pixel_area	utils/eval_segm.py	/^def get_pixel_area(segm):$/;"	f
+get_pixel_value	model/layers/stn.py	/^def get_pixel_value(img, x, y):$/;"	f
+get_weighted_mean	model/training/loss.py	/^def get_weighted_mean(mses, sums, globSum):$/;"	f
+group_norm	model/layers/attention.py	/^def group_norm(x, G=32, eps=1e-5, scope='group_norm'):$/;"	f
+guidance	model/layers/cspn.py	/^    guidance = tf.placeholder(tf.float32,$/;"	v
+h_fc1	model/layers/stn.py	/^  h_fc1 = tf.matmul(tf.zeros([batch, height*width*channel]), w_fc1) + b_fc1 $/;"	v
+h_trans	model/layers/stn.py	/^  h_trans = spatial_transformer_network(x, h_fc1)$/;"	v
+horizontal_cell	model/layers/layers.py	/^def horizontal_cell(images, num_filters_out, cell_fw, cell_bw, keep_prob=1.0, scope=None):$/;"	f
+hw_flatten	model/layers/attention.py	/^def hw_flatten(x):$/;"	f
+image	model/layers/sparse.py	/^    image = tf.placeholder(tf.float32,$/;"	v
+images_to_sequence	model/layers/layers.py	/^def images_to_sequence(tensor):$/;"	f
+initial	model/layers/stn.py	/^  initial = initial.astype('float32').flatten()$/;"	v
+initial	model/layers/stn.py	/^  initial = np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])$/;"	v
+kernel	model/layers/attention.py	/^def kernel(t, p, g, batchsize, num_channels, shape, num_order, use_scale):$/;"	f
+l2_norm	model/layers/attention.py	/^def l2_norm(v, eps=1e-12):$/;"	f
+list_file	split_train_test.py	/^list_file = []$/;"	v
+load_graph	utils/path_util.py	/^def load_graph(frozen_graph_filename):$/;"	f
+load_graph	utils/util.py	/^def load_graph(frozen_graph_filename):$/;"	f
+load_weights	model/model.py	/^    def load_weights(self, sess, weights_dict):$/;"	m	class:CUNet
+load_weights	model/tmp.py	/^    def load_weights(self, sess, weights_dict):$/;"	m	class:CUNet
+main	main.py	/^def main(path_list_train, path_list_val, output_folder, restore_path):$/;"	f
+mean_IU	utils/eval_segm.py	/^def mean_IU(eval_segm, gt_segm):$/;"	f
+mean_accuracy	utils/eval_segm.py	/^def mean_accuracy(eval_segm, gt_segm):$/;"	f
+n_fc	model/layers/stn.py	/^  n_fc = 6$/;"	v
+name	model/layers/cspn.py	/^                                   name='cnn_output')$/;"	v
+name	model/layers/cspn.py	/^                            name='cnn_output')$/;"	v
+name	model/layers/sparse.py	/^                           name="input_image")$/;"	v
+next	elastic_deformation.py	/^    def next(self):$/;"	m	class:ImageDataGenerator
+next_data	data_loader/data_generator.py	/^    def next_data(self, name):$/;"	m	class:DataGenerator
+next_data	data_loader/tmp.py	/^    def next_data(self, list):$/;"	m	class:Data_provider_la
+num_channels	model/layers/cspn.py	/^    num_channels = 5$/;"	v
+num_guid_channels	model/layers/cspn.py	/^    num_guid_channels = 4$/;"	v
+number_train	split_train_test.py	/^number_train = int(len(list_file) * 0.8)$/;"	v
+out	model/layers/cspn.py	/^    out = cspn(x, sparse_depth, guidance, kernel_size=3, num_layers=8)$/;"	v
+output_epoch_stats_train	model/training/trainer.py	/^    def output_epoch_stats_train(self, epoch, total_loss, total_loss_final, acc, shown_sample, lr, time_used):$/;"	m	class:Trainer
+output_epoch_stats_val	model/training/trainer.py	/^    def output_epoch_stats_val(self, epoch, total_loss, total_loss_final, acc, m_iou, time_used):$/;"	m	class:Trainer
+parser	freeze_graph.py	/^    parser = argparse.ArgumentParser()$/;"	v
+pixel_accuracy	utils/eval_segm.py	/^def pixel_accuracy(eval_segm, gt_segm):$/;"	f
+pixel_accuracy_flatten	utils/eval_segm.py	/^def pixel_accuracy_flatten(eval_segm, gt_segm, ignore_class=0):$/;"	f
+read_image_list	utils/path_util.py	/^def read_image_list(pathToList, prefix=None):$/;"	f
+read_image_list	utils/util.py	/^def read_image_list(pathToList, prefix=None):$/;"	f
+read_image_list_path	utils/image_util.py	/^def read_image_list_path(path):$/;"	f
+read_image_list_path	utils/util.py	/^def read_image_list_path(path):$/;"	f
+resize_height	utils/image_util.py	/^def resize_height(image, new_h):$/;"	f
+resize_to_prefered_height	utils/util.py	/^def resize_to_prefered_height(image, preferred_h):$/;"	f
+resize_to_prefered_width	utils/util.py	/^def resize_to_prefered_width(image, preferred_w):$/;"	f
+resize_width	utils/image_util.py	/^def resize_width(image, new_w):$/;"	f
+restart_val_runner	data_loader/data_generator.py	/^    def restart_val_runner(self):$/;"	m	class:DataGenerator
+restart_val_runner	data_loader/tmp.py	/^    def restart_val_runner(self):$/;"	m	class:Data_provider_la
+restore	model/model.py	/^    def restore(self, sess, model_path, var_dict=None):$/;"	m	class:CUNet
+restore	model/tmp.py	/^    def restore(self, sess, model_path, var_dict=None):$/;"	m	class:CUNet
+rnn_layers	model/layers/layers.py	/^def rnn_layers(name_scope, $/;"	f
+save	model/model.py	/^    def save(self, sess, model_path):$/;"	m	class:CUNet
+save	model/tmp.py	/^    def save(self, sess, model_path):$/;"	m	class:CUNet
+se_block	model/layers/attention.py	/^def se_block(input_feature, name, ratio=8):$/;"	f
+segm_size	utils/eval_segm.py	/^def segm_size(segm):$/;"	f
+self_attention_block	model/layers/attention.py	/^def self_attention_block(x, scope, num_heads=8, sn=False):$/;"	f
+self_attention_wrapper	model/layers/attention.py	/^def self_attention_wrapper(input_feature, name):$/;"	f
+separable_rnn	model/layers/layers.py	/^def separable_rnn(name_scope,$/;"	f
+sequence_to_images	model/layers/layers.py	/^def sequence_to_images(tensor, num_batches):$/;"	f
+sess	model/layers/sparse.py	/^    sess = tf.Session()$/;"	v
+shape	model/layers/cspn.py	/^                                      shape=[None, w, h, 1])$/;"	v
+shape	model/layers/cspn.py	/^                                   shape=[None, w, h, num_guid_channels * num_channels],$/;"	v
+shape	model/layers/sparse.py	/^                           shape=[None, 64, 64, 2],$/;"	v
+sparse_conv	model/layers/sparse.py	/^def sparse_conv(tensor, binary_mask=None,$/;"	f
+sparse_depth	model/layers/cspn.py	/^    sparse_depth = tf.placeholder(tf.float32,$/;"	v
+spatialCGNLx	model/layers/attention.py	/^def spatialCGNLx(input_x, out_channels=None, use_scale=False,$/;"	f
+spatial_attention	model/layers/attention.py	/^def spatial_attention(input_feature, name):$/;"	f
+spatial_transformer_layer	model/layers/layers.py	/^def spatial_transformer_layer(name_scope,$/;"	f
+spatial_transformer_network	model/layers/stn.py	/^def spatial_transformer_network(input_fmap, theta, out_dims=None, **kwargs):$/;"	f
+spectral_norm	model/layers/attention.py	/^def spectral_norm(w, iteration=1):$/;"	f
+stacking_unet	model/model.py	/^    def stacking_unet(self, input_tensor):$/;"	m	class:CUNet
+stop_all	data_loader/data_generator.py	/^    def stop_all(self):$/;"	m	class:DataGenerator
+stop_all	data_loader/tmp.py	/^    def stop_all(self):$/;"	m	class:Data_provider_la
+summary	model/model.py	/^    def summary(self):$/;"	m	class:CUNet
+summary	model/tmp.py	/^    def summary(self):$/;"	m	class:CUNet
+to_categorical	utils/image_util.py	/^def to_categorical(target_vector, n_labels):$/;"	f
+to_categorical_multi	utils/image_util.py	/^def to_categorical_multi(target_vector, n_labels):$/;"	f
+train	model/training/trainer.py	/^            epochs=250, gpu_device='0', max_spat_dim=5000000):$/;"	m	class:Trainer
+transposed_conv2d_bn_lrn_drop	model/layers/layers.py	/^def transposed_conv2d_bn_lrn_drop(name_scope, $/;"	f
+unet	model/model.py	/^        prev_downsampling=None, prev_upsampling=None):$/;"	m	class:CUNet
+unet_block	model/tmp.py	/^def unet_block(input_tensor, use_residual, use_lstm, use_spn, $/;"	f
+union_classes	utils/eval_segm.py	/^def union_classes(eval_segm, gt_segm):$/;"	f
+up_sample_resnet	model/layers/layers.py	/^def up_sample_resnet(inp, channel_in, channel_out, out_shape, filter_size, pool_size, res_depth, activation):$/;"	f
+upsample_simple	model/layers/layers.py	/^def upsample_simple(input_tensor, output_size, up_rate, num_classes):$/;"	f
+w_fc1	model/layers/stn.py	/^  w_fc1 = tf.Variable(tf.zeros([height*width*channel, n_fc]), name='w_fc1')$/;"	v
+write_file_list	utils/path_util.py	/^def write_file_list(path_to_files, val_ratio=0.2, shuffled=True):$/;"	f
+x	model/layers/cspn.py	/^    x = tf.placeholder(tf.float32, shape=[None, w, h, num_channels],$/;"	v
+x	model/layers/stn.py	/^  x = tf.placeholder(tf.float32, [batch, height, width, channel])$/;"	v

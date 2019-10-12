@@ -5,7 +5,7 @@ from __future__ import print_function
 import os
 import click
 
-from model.model import CUNet 
+from model.model import CUNet
 from model.training.trainer import Trainer
 from data_loader.data_generator import DataGenerator
 
@@ -19,23 +19,40 @@ def main(path_list_train, path_list_val, output_folder, restore_path):
     # Since the input images are of arbitrarily size, the autotune will significantly slow down training!
     # (it is calculated for each image)
     os.environ["TF_CUDNN_USE_AUTOTUNE"] = '0'
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
     img_channels = 1  # Number of image channels (gray scale)
     n_class = 1   # Number of output classes
 
     ### data generator parameters
-    data_kwargs = dict(batch_size_training=1, scale_min=0.2, scale_max=0.3, 
-                scale_val=0.3, affine_training=False, one_hot_encoding=True)
+    data_kwargs = dict(batch_size_training=1,\
+                        scale_min=0.8,\
+                        scale_max=0.8,
+                        scale_val=0.8,\
+                        affine_training=False,\
+                        one_hot_encoding=True)
 
-    data_provider = DataGenerator(path_list_train, path_list_val, n_class, 
-                                thread_num=1, queue_capacity=1, 
-                                label_prefix='labels', data_kwargs=data_kwargs)
+    data_provider = DataGenerator(path_list_train,\
+                                path_list_val,\
+                                n_class,
+                                thread_num=1,\
+                                queue_capacity=1,\
+                                label_prefix='labels',\
+                                data_kwargs=data_kwargs)
 
     ### model hyper-parameters
-    model_kwargs = dict(final_activation='identity', feature_root=16, scale_space_num=4, res_depth=3)
+    model_kwargs = dict(activation='relu',\
+                        num_unets=3,\
+                        number_scale=3,\
+                        feature_root=16,\
+                        res_depth=3,\
+                        attention=False,\
+                        residual=True,\
+                        dilated=True,\
+                        final_activation='relu')
 
     model = CUNet(img_channels, n_class, model_kwargs=model_kwargs)
-    opt_kwargs = dict(optimizer='adam', learning_rate=0.001)
+    opt_kwargs = dict(optimizer='adam', learning_rate=1e-4)
     loss_kwargs = dict(loss_name='mse', act_name='identity')
 
     # start training

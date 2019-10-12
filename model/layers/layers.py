@@ -2,15 +2,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np 
-import tensorflow as tf 
+import numpy as np
+import tensorflow as tf
 from tensorflow.contrib.layers import batch_norm
 from tensorflow.contrib.rnn import DropoutWrapper
 from tensorflow.contrib.rnn import LSTMCell
 from tensorflow.contrib.rnn import GRUCell
 from tensorflow.contrib.rnn import MultiRNNCell
 
-from .stn import spatial_transformer_network as stn 
+from .stn import spatial_transformer_network as stn
 from .sparse import sparse_conv
 
 
@@ -27,7 +27,7 @@ def feat_norm(input, dimZ):
 def conv2d_bn_lrn_drop(name_scope,
                        input_tensor,
                        kernel_size,
-                       pooling=None, 
+                       pooling=None,
                        strides=[1, 1, 1, 1],
                        pool_strides=[1, 1, 1, 1],
                        activation=tf.nn.relu,
@@ -57,14 +57,14 @@ def conv2d_bn_lrn_drop(name_scope,
         Returns:
             `4-D Tensor`, has the same type `inputs`.
     """
-    print("Kernel size", kernel_size)
+    # print("Kernel size", kernel_size)
     with tf.variable_scope(name_scope):
         if init_opt == 0:
             stddev = np.sqrt(2.0 / (kernel_size[0] * kernel_size[1] * kernel_size[2] * kernel_size[3]))
-        
+
         elif init_opt == 1:
-            init_opt == 5e-2 
-        
+            init_opt == 5e-2
+
         elif init_opt == 2:
             stddev = min(np.sqrt(2.0 / (kernel_size[0] * kernel_size[1] * kernel_size[2])), 5e-2)
 
@@ -72,7 +72,7 @@ def conv2d_bn_lrn_drop(name_scope,
             input_tensor, binary_mask = input_tensor
             output_tensor, binary_mask = sparse_conv(input_tensor, binary_mask, filters=kernel_size[3],
                                                     kernel_size=kernel_size[0], strides=strides[0])
-        else:   
+        else:
             kernel = tf.get_variable('weights', kernel_size,
                                     initializer=tf.random_normal_initializer(stddev=stddev))
 
@@ -84,23 +84,23 @@ def conv2d_bn_lrn_drop(name_scope,
 
         if use_bn:
             output_tensor = batch_norm(output_tensor, is_training=is_training, scale=True, fused=True, scope='batch_norm')
-        
+
         if use_mvn:
             output_tensor = feat_norm(output_tensor, kernel_size[3])
-        
+
         if activation:
             output_tensor = activation(output_tensor, name='activation')
-        
+
         if use_lrn:
             output_tensor = tf.nn.local_response_normalization(output_tensor, name='local_responsive_norm')
-        
+
         if dropout_maps:
             conv_shape = tf.shape(output_tensor)
             n_shape = tf.stack([conv_shape[0], 1, 1, conv_shape[3]])
             output_tensor = tf.nn.dropout(output_tensor, keep_prob, noise_shape=n_shape)
         else:
             output_tensor = tf.nn.dropout(output_tensor, keep_prob)
-        
+
         if pooling:
             output_tensor = tf.nn.max_pool(output_tensor, ksize=pooling, strides=pool_strides, padding='VALID')
 
@@ -109,9 +109,9 @@ def conv2d_bn_lrn_drop(name_scope,
         else:
             return output_tensor
 
-def rnn_layers(name_scope, 
-               input_tensor, 
-               num_hidden=256, 
+def rnn_layers(name_scope,
+               input_tensor,
+               num_hidden=256,
                num_layer=1,
                keep_prob=1.0):
         """
@@ -121,30 +121,30 @@ def rnn_layers(name_scope,
                 :param input_tensor: input tensor (type: tensor)
                 :param num_hidden  : number of hidden cells (type: int)
                 :param num_layer  : number of hidden layers (type: int)
-            :return 
+            :return
         """
 
         with tf.variable_scope(name_scope):
-            # forward direction cells 
+            # forward direction cells
             fw_cells = [LSTMCell(num_units=num_hidden, forget_bias=1.0, state_is_tuple=True) for _ in range(num_layer)]
 
-            # backward direction cells 
+            # backward direction cells
             bw_cells = [LSTMCell(num_units=num_hidden, forget_bias=1.0, state_is_tuple=True) for _ in range(num_layer)]
 
-            # bidirectional RNN 
+            # bidirectional RNN
             lstm_net, _, _ = tf.contrib.rnn.stack_bidirectional_dynamic_rnn(fw_cells, bw_cells, input_tensor, dtype=tf.float32)
 
-            # Dropout layer 
+            # Dropout layer
             if keep_prob:
                 lstm_net = tf.nn.dropout(lstm_net, keep_prob=keep_prob)
-            
+
             return lstm_net
-            
+
 def spatial_transformer_layer(name_scope,
                               input_tensor,
-                              img_size, 
+                              img_size,
                               kernel_size,
-                              pooling=None, 
+                              pooling=None,
                               strides=[1, 1, 1, 1],
                               pool_strides=[1, 1, 1, 1],
                               activation=tf.nn.relu,
@@ -157,7 +157,7 @@ def spatial_transformer_layer(name_scope,
                               init_opt=0,
                               bias_init=0.1):
     """
-        Define spatial transformer network layer 
+        Define spatial transformer network layer
         Args:
         scope_or_name: `string` or `VariableScope`, the scope to open.
         inputs: `4-D Tensor`, it is assumed that `inputs` is shaped `[batch_size, Y, X, Z]`.
@@ -175,16 +175,16 @@ def spatial_transformer_layer(name_scope,
     Returns:
         `4-D Tensor`, has the same type `inputs`.
     """
-    
-    img_height = img_size[0]
-    img_width = img_size[1]
+
+    #img_height = img_size[0]
+    #img_width = img_size[1]
 
     with tf.variable_scope(name_scope):
         if init_opt == 0:
             stddev = np.sqrt(2.0 / (kernel_size[0] * kernel_size[1] * kernel_size[2] * kernel_size[3]))
-        
+
         elif init_opt == 1:
-            stddev = 5e-2 
+            stddev = 5e-2
 
         elif init_opt == 2:
             stddev = min(np.sqrt(2.0 / (kernel_size[0] * kernel_size[1] * kernel_size[2])), 5e-2)
@@ -207,7 +207,7 @@ def spatial_transformer_layer(name_scope,
 
         if activation:
             output_tensor = activation(output_tensor, name='activation')
-        
+
         if use_lrn:
             output_tensor = tf.nn.local_response_normalization(output_tensor, name='local_responsive_normalization')
 
@@ -217,7 +217,7 @@ def spatial_transformer_layer(name_scope,
             output_tensor = tf.nn.dropout(output_tensor, keep_prob=keep_prob, noise_shape=n_shape)
         else:
             output_tensor = tf.nn.dropout(output_tensor, keep_prob=keep_prob)
-        
+
         if pooling:
             output_tensor = tf.nn.max_pool(output_tensor, ksize=pooling, strides=pool_strides, padding='VALID')
 
@@ -229,7 +229,7 @@ def spatial_transformer_layer(name_scope,
         output_tensor = tf.contrib.layers.fully_connected(output_tensor, 6, scope='fully_connected_layer_2')
         output_tensor = tf.nn.tanh(output_tensor)
 
-        stn_output = stn(input_fmap=input_tensor, theta=output_tensor, out_dims=(img_height, img_width))
+        stn_output = stn(input_fmap=input_tensor, theta=output_tensor, out_dims=img_size)
 
         return stn_output
 
@@ -251,7 +251,7 @@ def dilated_conv2d_bn_lrn_drop(name_scope,
             scope_or_name: `string` or `VariableScope`, the scope to open.
             inputs: `4-D Tensor`, it is assumed that `inputs` is shaped `[batch_size, Y, X, Z]`.
             kernel: `4-D Tensor`, [kernel_height, kernel_width, in_channels, out_channels] kernel.
-            dilated_rate: `int`, dilated factor 
+            dilated_rate: `int`, dilated factor
             strides: list of `ints`, length 4, the stride of the sliding window for each dimension of `inputs`.
             activation: activation function to be used (default: `tf.nn.relu`).
             use_bn: `bool`, whether or not to include batch normalization in the layer.
@@ -268,15 +268,15 @@ def dilated_conv2d_bn_lrn_drop(name_scope,
             stddev = np.sqrt(2.0 / (kernel_size[0] * kernel_size[1] * kernel_size[2] * kernel_size[3]))
 
         elif init_opt == 1:
-            stddev = 5e-2 
-        
+            stddev = 5e-2
+
         elif init_opt == 2:
             stddev = min(np.sqrt(2.0 / (kernel_size[0] * kernel_size[1] * kernel_size[2])), 5e-2)
 
-        kernel = tf.get_variable('weights', kernel_size, 
+        kernel = tf.get_variable('weights', kernel_size,
                     initializer=tf.random_normal_initializer(stddev=stddev))
 
-        dilated_conv = tf.nn.atrous_conv2d(input_tensor, kernel, rate=dilated_rate, 
+        dilated_conv = tf.nn.atrous_conv2d(input_tensor, kernel, rate=dilated_rate,
                     padding='SAME', name='dilated_conv')
 
         bias = tf.get_variable('bias', kernel_size[3], initializer=tf.constant_initializer(value=bias_init))
@@ -304,7 +304,7 @@ def dilated_conv2d_bn_lrn_drop(name_scope,
 
         return output_tensor
 
-def transposed_conv2d_bn_lrn_drop(name_scope, 
+def transposed_conv2d_bn_lrn_drop(name_scope,
                                 input_tensor,
                                 kernel_size,
                                 output_size,
@@ -323,7 +323,7 @@ def transposed_conv2d_bn_lrn_drop(name_scope,
             scope_or_name: `string` or `VariableScope`, the scope to open.
             inputs: `4-D Tensor`, it is assumed that `inputs` is shaped `[batch_size, Y, X, Z]`.
             kernel: `4-D Tensor`, [kernel_height, kernel_width, in_channels, out_channels] kernel.
-            dilated_rate: `int`, dilated factor 
+            dilated_rate: `int`, dilated factor
             stride: ints, length 1, the stride of the sliding window for each dimension of `inputs`.
             activation: activation function to be used (default: `tf.nn.relu`).
             use_bn: `bool`, whether or not to include batch normalization in the layer.
@@ -338,27 +338,27 @@ def transposed_conv2d_bn_lrn_drop(name_scope,
     with tf.variable_scope(name_scope):
         if init_opt == 0:
             stddev = np.sqrt(2.0 / (kernel_size[0] * kernel_size[1] * kernel_size[2] * kernel_size[3]))
-        
+
         elif init_opt == 1:
             stddev = 5e-2
-        
+
         elif init_opt == 2:
             stddev = min(np.sqrt(2.0 / (kernel_size[0] * kernel_size[1] * kernel_size[2])), 5e-2)
 
-        kernel = tf.get_variable('weights', kernel_size, 
+        kernel = tf.get_variable('weights', kernel_size,
                     initializer=tf.random_normal_initializer(stddev=stddev))
-        
+
         bias = tf.get_variable('bias', kernel_size[2],
                     initializer=tf.random_normal_initializer(stddev=stddev))
-        
-        transposed_conv = tf.nn.conv2d_transpose(input_tensor, kernel, output_size, 
+
+        transposed_conv = tf.nn.conv2d_transpose(input_tensor, kernel, output_size,
                     strides=[1, stride, stride, 1], padding='SAME', name='transposed_conv2d')
 
         output_tensor = tf.nn.bias_add(transposed_conv, bias, name='pre_activation')
 
         if use_bn:
             output_tensor = batch_norm(output_tensor, is_training=is_training, scale=True, fused=True, scope='batch_normalization')
-        
+
         if use_mvn:
             output_tensor = feat_norm(output_tensor, kernel_size[3])
 
@@ -470,8 +470,8 @@ def sequence_to_images(tensor, num_batches):
     return tf.transpose(reshaped, [1, 2, 0, 3])
 
 def separable_rnn(name_scope,
-                  input_tensor, 
-                  num_filters, 
+                  input_tensor,
+                  num_filters,
                   keep_prob=1.0,
                   cell_type='LSTM'):
     """
@@ -501,7 +501,7 @@ def separable_rnn(name_scope,
             if 'LSTM' in cell_type:
                 cell_fw = LSTMCell(num_filters, use_peepholes=True, state_is_tuple=True)
                 cell_bw = LSTMCell(num_filters, use_peepholes=True, state_is_tuple=True)
-            
+
             if 'GRU' in cell_type:
                 cell_fw = GRUCell(num_filters)
                 cell_bw = GRUCell(num_filters)

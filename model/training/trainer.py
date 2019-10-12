@@ -2,21 +2,26 @@ from __future__ import print_function, division
 
 import os
 import time
+import logging
 
 import tensorflow as tf
 import numpy as np
 
-from .loss import get_loss, get_mean_iou
+from .loss import (
+        get_loss,
+        get_mean_iou,
+        get_all_losses
+        )
 from .optimizer import get_optimizer
 from utils.eval_segm import mean_IU
 
 
 class Trainer(object):
-    """
-    Trains a CU-Net instance
-    :param net: the CU-Net-net instance to train
-    :param opt_kwargs: (optional) kwargs passed to the optimizer
-    :param loss_kwargs: (optional) kwargs passed to the loss function
+    """ Trains a CU-Net instance
+    Parameters:
+        net: the CU-Net-net instance to train
+        opt_kwargs: (optional) kwargs passed to the optimizer
+        loss_kwargs: (optional) kwargs passed to the loss function
     """
 
     def __init__(self, net, opt_kwargs={}, loss_kwargs={}):
@@ -28,11 +33,10 @@ class Trainer(object):
         self.global_step = tf.placeholder(tf.int64)
         self.opt_kwargs = opt_kwargs
         self.loss_kwargs = loss_kwargs
-
         self.loss_type = loss_kwargs.get("loss_name", "cross_entropy")
 
     def _initialize(self, batch_steps_per_epoch, output_path):
-        self.loss, self.final_loss = get_loss(self.net.logits, self.label, self.loss_kwargs)
+        self.loss, self.final_loss = get_all_losses(self.net.all_predicts, self.label, self.loss_kwargs)
         self.acc, self.acc_update = get_mean_iou(self.net.predictor_class, self.label_class, num_class=self.net.n_class, ignore_class_id=0)
 
         # Isolate the variables stored behind the scenes by the metric operation
@@ -50,20 +54,21 @@ class Trainer(object):
 
         return init
 
-    def train(self, data_provider, output_path, restore_file=None, batch_steps_per_epoch=1024, epochs=250,
-              gpu_device='0', max_spat_dim=5000000):
-        """
-        Launches the training process
-        :param data_provider:
-        :param output_path:
-        :param restore_path:
-        :param batch_size:
-        :param batch_steps_per_epoch:
-        :param epochs:
-        :param keep_prob:
-        :param gpu_device:
-        :param max_spat_dim:
-        :return:
+    def train(self, data_provider, output_path,\
+            restore_file=None, batch_steps_per_epoch=1024,\
+            epochs=250, gpu_device='0', max_spat_dim=5000000):
+        """ Launches the training process
+        Arguments:
+            data_provider:
+            output_path:
+            restore_path:
+            batch_size:
+            batch_steps_per_epoch:
+            epochs:
+            keep_prob:
+            gpu_device:
+            max_spat_dim:
+        Returns:
         """
         print("Epochs: " + str(epochs))
         print("Batch Size Train: " + str(data_provider.batch_size_training))
@@ -82,9 +87,12 @@ class Trainer(object):
         # session_conf.gpu_options.visible_device_list=gpu_device
         # session_conf.gpu_options.per_process_gpu_memory_fraction = 0.4
 
-        gpu_options = tf.GPUOptions(visible_device_list=str(gpu_device), per_process_gpu_memory_fraction=0.7)
-        with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
-        # with tf.Session(config=session_conf) as sess:
+        gpu_options = tf.GPUOptions(visible_device_list=\
+            str(gpu_device), per_process_gpu_memory_fraction=0.7)
+        config = tf.ConfigProto(gpu_options=gpu_options)
+        config.gpu_options.allow_growth = True
+
+        with tf.Session(config=config) as sess:
             sess.run(init)
             sess.run(tf.local_variables_initializer())
 
@@ -93,10 +101,9 @@ class Trainer(object):
                 self.net.restore(sess, restore_file)
             else:
                 print("Starting from scratch.")
-
             print("Start optimization")
 
-            bestAcc = 1111110.0
+            bestAcc = 0.0
             shown_samples = 0
             for epoch in range(epochs):
                 total_loss = 0
@@ -165,11 +172,11 @@ class Trainer(object):
                         break
                     # Run validation
                     if self.final_loss is not None:
-                        loss, final_loss, acc, batch_pred = sess.run([self.loss, self.final_loss, self.acc_update, self.net.predictor],
+                        loss, final_loss, acc, batch_pred = sess.run([self.loss, self.final_loss, self.acc_update, self.net.predictor_class],
                                                                      feed_dict={self.net.input_tensor: batch_img, self.label: batch_mask})
                         total_loss_final += final_loss
                     else:
-                        loss, acc, batch_pred = sess.run([self.loss, self.acc_update, self.net.predictor],
+                        loss, acc, batch_pred = sess.run([self.loss, self.acc_update, self.net.predictor_class],
                                                          feed_dict={self.net.input_tensor: batch_img, self.label: batch_mask})
 
                     acc = sess.run(self.acc)
