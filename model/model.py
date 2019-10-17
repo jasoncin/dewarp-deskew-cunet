@@ -94,7 +94,7 @@ class CUNet(object):
             self.all_predicts = all_logits
 
         # self.predictor_class = tf.argmax(self.predictor, -1)
-        self.predictor_class = self.all_predicts[-1]
+        self.predictor_class = self.all_predicts[-1][1]
         # self.summary()
 
     def unet(self, input_tensor, inchannel_num, \

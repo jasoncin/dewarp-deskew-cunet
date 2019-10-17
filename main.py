@@ -26,9 +26,9 @@ def main(path_list_train, path_list_val, output_folder, restore_path):
 
     ### data generator parameters
     data_kwargs = dict(batch_size_training=1,\
-                        scale_min=0.8,\
-                        scale_max=0.8,
-                        scale_val=0.8,\
+                        scale_min=0.7,\
+                        scale_max=0.7,
+                        scale_val=0.7,\
                         affine_training=False,\
                         one_hot_encoding=True)
 
@@ -46,9 +46,9 @@ def main(path_list_train, path_list_val, output_folder, restore_path):
                         number_scale=3,\
                         feature_root=16,\
                         res_depth=3,\
-                        attention=False,\
+                        attention=True,\
                         residual=True,\
-                        dilated=True,\
+                        dilated=False,\
                         final_activation='relu')
 
     model = CUNet(img_channels, n_class, model_kwargs=model_kwargs)
